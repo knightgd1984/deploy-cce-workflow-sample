@@ -1,2 +1,1 @@
-# DeployCCEFromSWRWorkflow
-
+# maven-docker-cce

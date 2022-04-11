@@ -74,7 +74,7 @@ jobs:
           systemctl enable docker.service
           systemctl start docker.service
           docker -v
-    # 下载镜像并启动服务
+    # 下载镜像并启动服务,如果第一次启动，前面的docker stop和docker run可以跳过
     - name: install docker and start docker service
       uses: huaweicloud/ssh-remote-action@v1.2
       with:

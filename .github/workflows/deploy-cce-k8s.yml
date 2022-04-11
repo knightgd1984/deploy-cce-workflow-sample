@@ -1,0 +1,103 @@
+name: "commit-master"
+
+on:
+  push:
+    branches: 
+    - 'master'
+
+env: 
+  IMAGE_TAG: maven-samp-${{ github.sha }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check Out 
+      uses: actions/checkout@v2
+
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+
+    - name: build maven project
+      run: mvn clean -U package -Dmaven.test.skip 
+
+    # 上传当前版本到OBS中归档，需要提前准备OBS的AK/SK,并在github项目添加ACCESSKEY和SECRETACCESSKEY两个secrets
+    - name: Upload To Huawei OBS
+      uses: huaweicloud/obs-helper@v1.0.0
+      id: upload_file_to_obs
+      with:
+        access_key: ${{ secrets.ACCESSKEY }}
+        secret_key: ${{ secrets.SECRETACCESSKEY }}
+        region: region
+        bucket_name: bucket-test
+        operation_type: upload
+        local_file_path: target/intro.war
+        obs_file_path: workflow/intro/v1.0.0.1/
+
+    # 检查docker版本
+    - name: check docker version
+      run: docker -v
+      
+    # docker login,设置登陆到华为的swr
+    - name: Login to huawei SWR
+      uses: docker/login-action@v1
+      with:
+        registry: "swr.cn-north-4.myhuaweicloud.com"
+        username: ${{ secrets.SWR_USERNAME }}
+        password: ${{ secrets.SWR_PASSWD }}
+
+    # 设置 docker 环境
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: docker/setup-buildx-action@v1
+      
+    # build 并且 push docker 镜像
+    - name: Build and push
+      id: docker_build
+      uses: docker/build-push-action@v2
+      with:
+        context: ./
+        file: ./Dockerfile
+        push: true
+        tags: swr.cn-north-4.myhuaweicloud.com/ptworkflow/tomcat:${{ IMAGE_TAG }}
+
+    - name: install kubectl
+      run: |
+        mkdir -p ~/k8s
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        ls -la
+        mv kubectl ~/k8s
+        chmod +x ~/k8s/kubectl
+        ls -la ~/k8s
+        export PATH=~/k8s:$PATH
+        mkdir ~/.kube
+
+    # 需要提前准备好kubectconfig，并存放到可以方便下载到的地方，不建议放到代码仓库里，容易泄露，这里我们放在了obs里
+    - name: Upload To Huawei OBS
+      uses: huaweicloud/obs-helper@v1.0.0
+      id: upload_file_to_obs
+      with:
+        access_key: ${{ secrets.ACCESSKEY }}
+        secret_key: ${{ secrets.SECRETACCESSKEY }}
+        region: region
+        bucket_name: bucket-test
+        operation_type: download
+        obs_file_path: k8s/kubeconfig.json
+        local_file_path: ~/.kube/config
+
+      
+    # 部署tomcat 到k8s集群
+    - name: deploy tomcat to CCE k8s from SWR
+      run: |
+        sed -i 's/_IMAGE_TAG_/${{ IMAGE_TAG }}/g' ./tomcat/tomcat-deployment.yml
+        kubectl apply -f tomcat/tomcat-deployment.yml
+        kubectl apply -f tomcat/tomcat-service.yml
+        sleep 60
+        kubectl get deployment
+        kubectl get pods --show-labels
+        kubectl get service
+
+        
+

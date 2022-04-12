@@ -182,3 +182,16 @@ CCE支持两种方式部署
         kubectl get service
 ```  
 详情请参考: .github/workflow/deploy-cce-k8s.yml
+
+####  手工控制image tag
+如果希望手工控制镜像tag,可以配置放开这个参数，这样每次action执行，都会弹出来image_tag对话框让你填写
+```yaml
+  workflow_dispatch: 
+    inputs:
+      tags:
+        required: true
+        default: 'v1.0.0.1'
+        description: 'docker build image tag'  
+env: 
+ IMAGE_TAG: ${{ github.event.inputs.image_tag }}
+```

@@ -4,8 +4,16 @@ on:
   push:
     branches: 
     - 'master'
+# 如果希望手工控制镜像tag,可以配置放开这个参数，这样每次action执行，都会弹出来image_tag对话框让你填写
+#  workflow_dispatch: 
+#    inputs:
+#      tags:
+#        required: true
+#        default: 'v1.0.0.1'
+#        description: 'docker build image tag'  
 env: 
   IMAGE_TAG: maven-samp-${{ github.sha }}
+# IMAGE_TAG: ${{ github.event.inputs.image_tag }} //如果希望手工控制镜像tag,可以配置放开这个参数，这样每次action执行，都会弹出来image_tag对话框让你填写
 jobs:
   build:
     runs-on: ubuntu-latest

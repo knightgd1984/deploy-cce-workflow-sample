@@ -186,6 +186,10 @@ CCE支持两种方式部署
 ####  手工控制image tag
 如果希望手工控制镜像tag,可以配置放开这个参数，这样每次action执行，都会弹出来image_tag对话框让你填写
 ```yaml
+on:
+  push:
+    branches: 
+    - 'master'
   workflow_dispatch: 
     inputs:
       tags:

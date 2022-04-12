@@ -13,6 +13,7 @@ on:
 #        description: 'docker build image tag'  
 env: 
   IMAGE_TAG: maven-samp-${{ github.sha }}
+  REGIONID: ${region_id}
 # IMAGE_TAG: ${{ github.event.inputs.image_tag }} //如果希望手工控制镜像tag,也需要放开这行，同时屏蔽上面那行IMAGE_TAG
 jobs:
   build:
@@ -37,7 +38,7 @@ jobs:
       with:
         access_key: ${{ secrets.ACCESSKEY }}
         secret_key: ${{ secrets.SECRETACCESSKEY }}
-        region: region
+        region: ${{ env.REGIONID }}
         bucket_name: bucket-test
         operation_type: upload
         local_file_path: target/intro.war
@@ -48,12 +49,12 @@ jobs:
       run: docker -v
       
     # docker login,设置登陆到华为的swr
-    - name: Login to huawei SWR
-      uses: docker/login-action@v1
+    - name: Log in to HuaweiCloud SWR
+      uses: huaweicloud/swr-login@v1
       with:
-        registry: "swr.cn-north-4.myhuaweicloud.com"
-        username: ${{ secrets.SWR_USERNAME }}
-        password: ${{ secrets.SWR_PASSWD }}
+      region: ${{ env.REGIONID }}
+      access-key-id: ${{ secrets.ACCESSKEY }}
+      access-key-secret: ${{ secrets.SECRETACCESSKEY }}
 
     # 设置 docker 环境
     - name: Set up Docker Buildx
@@ -68,7 +69,7 @@ jobs:
         context: ./
         file: ./Dockerfile
         push: true
-        tags: swr.cn-north-4.myhuaweicloud.com/ptworkflow/tomcat:${{ IMAGE_TAG }}
+        tags: swr.${{ env.REGIONID }}.myhuaweicloud.com/ptworkflow/tomcat:${{ IMAGE_TAG }}
 
     - name: install kubectl
       run: |
@@ -88,7 +89,7 @@ jobs:
       with:
         access_key: ${{ secrets.ACCESSKEY }}
         secret_key: ${{ secrets.SECRETACCESSKEY }}
-        region: region
+        region: ${{ env.REGIONID }}
         bucket_name: bucket-test
         operation_type: download
         obs_file_path: k8s/kubeconfig.json

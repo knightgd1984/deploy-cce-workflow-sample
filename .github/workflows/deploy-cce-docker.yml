@@ -13,6 +13,8 @@ on:
 #        description: 'docker build image tag'  
 env: 
   IMAGE_TAG: maven-samp-${{ github.sha }}
+  IPADDR: ${ip_address}
+  REGIONID: ${region_id}
 # IMAGE_TAG: ${{ github.event.inputs.image_tag }} //如果希望手工控制镜像tag,也需要放开这行，同时屏蔽上面那行IMAGE_TAG
 jobs:
   build:
@@ -37,7 +39,7 @@ jobs:
       with:
         access_key: ${{ secrets.ACCESSKEY }}
         secret_key: ${{ secrets.SECRETACCESSKEY }}
-        region: region
+        region: ${{ env.REGIONID }}
         bucket_name: bucket-test
         operation_type: upload
         local_file_path: target/intro.war
@@ -51,7 +53,7 @@ jobs:
     - name: Login to huawei SWR
       uses: docker/login-action@v1
       with:
-        registry: "swr.cn-north-4.myhuaweicloud.com"
+        registry: swr.${{ env.REGIONID }}.myhuaweicloud.com
         username: ${{ secrets.SWR_USERNAME }}
         password: ${{ secrets.SWR_PASSWD }}
 
@@ -68,13 +70,13 @@ jobs:
         context: ./
         file: ./Dockerfile
         push: true
-        tags: swr.cn-north-4.myhuaweicloud.com/ptworkflow/tomcat:${{ IMAGE_TAG }}
+        tags: swr.${{ env.REGIONID }}.myhuaweicloud.com/ptworkflow/tomcat:${{ IMAGE_TAG }}
         
     # 在服务器上部署docker并启动，如果服务器已经安装了docker环境，可以跳过
     - name: install docker and start docker service
       uses: huaweicloud/ssh-remote-action@v1.2
       with:
-        ipaddr: 192.168.158.132
+        ipaddr: ${{ env.IPADDR }}
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         commands: |
@@ -86,17 +88,17 @@ jobs:
     - name: install docker and start docker service
       uses: huaweicloud/ssh-remote-action@v1.2
       with:
-        ipaddr: 192.168.158.132
+        ipaddr: ${{ env.IPADDR }}
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         commands: |
           docker stop `docker ps -a | grep tomcat | grep maven-sample | awk '{print $1}'`
           docker rm `docker ps -a | grep tomcat | grep maven-sample | awk '{print $1}'`
-          docker pull swr.cn-north-4.myhuaweicloud.com/ptworkflow/tomcat:${{ IMAGE_TAG }}
-          docker run -d -p 8080:8080 swr.cn-north-4.myhuaweicloud.com/ptworkflow/tomcat:${{ IMAGE_TAG }}
+          docker pull swr.${{ env.REGIONID }}.myhuaweicloud.com/ptworkflow/tomcat:${{ IMAGE_TAG }}
+          docker run -d -p 8080:8080 swr.${{ env.REGIONID }}.myhuaweicloud.com/ptworkflow/tomcat:${{ IMAGE_TAG }}
         
     # 检查docker版本
     - name: check docker version
       run: |
         sleep 30
-        curl -kv http://192.168.158.132:8080
+        curl -kv http://${{ env.IPADDR }}:8080

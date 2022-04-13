@@ -64,7 +64,7 @@ CCE支持两种方式部署
     - name: Login to huawei SWR
       uses: docker/login-action@v1
       with:
-        registry: "swr.cn-north-4.myhuaweicloud.com"
+        registry: swr.${{ env.REGIONID }}.myhuaweicloud.com
         username: ${{ secrets.SWR_USERNAME }}
         password: ${{ secrets.SWR_PASSWD }}
 
@@ -81,7 +81,7 @@ CCE支持两种方式部署
         context: ./
         file: ./Dockerfile
         push: true
-        tags: swr.cn-north-4.myhuaweicloud.com/ptworkflow/tomcat:${{ IMAGE_TAG }}
+        tags: swr.${{ env.REGIONID }}.myhuaweicloud.com/ptworkflow/tomcat:${{ IMAGE_TAG }}
 ```
 #### docker环境处理(如果已经安装好可以跳过)
 ```yaml
@@ -89,7 +89,7 @@ CCE支持两种方式部署
     - name: install docker and start docker service
       uses: huaweicloud/ssh-remote-action@v1.2
       with:
-        ipaddr: 192.168.158.132
+        ipaddr: ${{ env.IPADDR }}
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         commands: |
@@ -104,21 +104,21 @@ CCE支持两种方式部署
     - name: install docker and start docker service
       uses: huaweicloud/ssh-remote-action@v1.2
       with:
-        ipaddr: 192.168.158.132
+        ipaddr: ${{ env.IPADDR }}
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         commands: |
           docker stop `docker ps -a | grep tomcat | grep maven-sample | awk '{print $1}'`
           docker rm `docker ps -a | grep tomcat | grep maven-sample | awk '{print $1}'`
-          docker pull swr.cn-north-4.myhuaweicloud.com/ptworkflow/tomcat:${{ IMAGE_TAG }}
-          docker run -d -p 8080:8080 swr.cn-north-4.myhuaweicloud.com/ptworkflow/tomcat:${{ IMAGE_TAG }}
+          docker pull swr.${{ env.REGIONID }}.myhuaweicloud.com/ptworkflow/tomcat:${{ IMAGE_TAG }}
+          docker run -d -p 8080:8080 swr.${{ env.REGIONID }}.myhuaweicloud.com/ptworkflow/tomcat:${{ IMAGE_TAG }}
 ```
 #### 检查服务是否启动
 ```yaml
     - name: check docker version
       run: |
         sleep 30
-        curl -kv http://192.168.158.132:8080
+        curl -kv http://${{ env.IPADDR }}:8080
 ```  
 详情请参考: .github/workflow/deploy-cce-docker.yml
 ## 3.部署CCE-k8s服务
@@ -132,16 +132,19 @@ CCE支持两种方式部署
 	1、OBS服务，并创建桶
 	2、SWR服务，并创建组织
 	3、准备好CCE的k8s集群，并获取kubeconfig配置文件，存储到OBS桶里备用
+
 #### 参数准备:需要准备如下数据
 1、生成ACCESSKEY,SECRETACCESSKEY获取方式请参考 `https://support.huaweicloud.com/apm_faq/apm_03_0001.html`
-2、生成swr的长期登录指令，请参考 `https://support.huaweicloud.com/usermanual-swr/swr_01_1000.html`
-3、CCE-K8s集群的kubeconfig文件，可以到集群详情页面中下载
+2、CCE-K8s集群的kubeconfig文件，可以到集群详情页面中下载
+3、注意将env:ipaddr中的${ip_address}替换为真实的IP地址
+4、填写env:REGIONID中的${region_id}为需要部署的真实region，如cn-north-4
 
 #### 需要提前在github仓库-->settings-->Actions下添加如下secrets
 1、USERNAME    --CCE节点的登录账号
 2、PASSWORD    --CCE节点的登录密码
-3、SWR_PASSWD        --登录SWR的密码
-4、SWR_USERNAME   --登录SWR的用户名  
+3、ACCESSKEY   --华为云账号的ACCESSKEY 
+4、SECRETACCESSKEY   --华为云账号的SECRETACCESSKEY
+
 #### 部署过程:前面的打包，上传OBS和制作镜像不在赘述
 ```yaml
 #安装kubectl并配置kubeconfig
@@ -182,3 +185,20 @@ CCE支持两种方式部署
         kubectl get service
 ```  
 详情请参考: .github/workflow/deploy-cce-k8s.yml
+
+####  手工控制image tag
+如果希望手工控制镜像tag,可以配置放开这个参数，这样每次action执行，都会弹出来image_tag对话框让你填写
+```yaml
+on:
+  push:
+    branches: 
+    - 'master'
+  workflow_dispatch: 
+    inputs:
+      tags:
+        required: true
+        default: 'v1.0.0.1'
+        description: 'docker build image tag'  
+env: 
+ IMAGE_TAG: ${{ github.event.inputs.image_tag }}
+```

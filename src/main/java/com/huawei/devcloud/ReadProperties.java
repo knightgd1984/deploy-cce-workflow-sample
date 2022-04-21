@@ -1,3 +1,5 @@
+package com.huawei.devcloud;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -12,6 +14,7 @@ public class ReadProperties {
             config.load(is);
             is.close();
         } catch (IOException e) {
+
         }
     }
 

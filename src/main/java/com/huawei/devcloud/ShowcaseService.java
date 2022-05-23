@@ -1,7 +1,6 @@
 package com.huawei.devcloud;
 
 import java.util.HashMap;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.GET;
@@ -46,7 +45,7 @@ public class ShowcaseService {
         JSONArray json = new JSONArray();
         json.put(map);
         System.out.println(json.toString());
-        return json.toString();//"getSoftwareInfo";
+        return json.toString();
     }
     
     @GET
@@ -66,7 +65,7 @@ public class ShowcaseService {
         JSONArray json = new JSONArray();
         json.put(map);
         System.out.println(json.toString());
-        return json.toString();//"getSoftwareInfo";
+        return json.toString();
     }
     
     @GET
@@ -86,7 +85,7 @@ public class ShowcaseService {
         JSONArray json = new JSONArray();
         json.put(map);
         System.out.println(json.toString());
-        return json.toString();//"getSoftwareInfo";
+        return json.toString();
     }
     
     @GET
@@ -106,6 +105,6 @@ public class ShowcaseService {
         JSONArray json = new JSONArray();
         json.put(map);
         System.out.println(json.toString());
-        return json.toString();//"getSoftwareInfo";
+        return json.toString();
     }
 }

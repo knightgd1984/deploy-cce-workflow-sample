@@ -20,8 +20,7 @@ public class ReadProperties {
 
     public static String readValue(String key) {
         try {
-            String value = config.getProperty(key);
-            return value;
+            return config.getProperty(key);
         } catch (Exception e) {
             return null;
         }

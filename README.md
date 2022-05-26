@@ -204,6 +204,10 @@ env:
 
 ## 4.基于cce-credentials-action部署CCE-k8s服务
 说明:可以通过 huaweicloud/cce-credentials-action@v1.0.0 自动完成kubect的安装和kubeconfig的配置，省略手动安装kubectl和配置kubeconfig的过程
+参数说明:
+(1).获取华为云用户的AK/SK和project_id,详情请参考 https://support.huaweicloud.com/apm_faq/apm_03_0001.html,AK和SK需要设置到github仓库的secrets中
+(2).获取CCE集群的集群ID,获取方法:点击CCE集群进入CCE详情页面,然后拷贝左上角的 集群ID
+(3).由于要从外网github上访问华为云CCE集群，需要为集群创建并绑定弹性公网IP
 使用样例如下:
 ```yaml
     # docker login,设置登陆到华为的swr

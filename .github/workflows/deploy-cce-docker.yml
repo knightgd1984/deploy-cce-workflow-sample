@@ -83,7 +83,7 @@ jobs:
 
     # 在服务器上部署docker并启动，如果服务器已经安装了docker环境，可以跳过
     - name: install docker and start docker service
-      uses: huaweicloud/ssh-remote-action@v1.2
+      uses: huaweicloud/ssh-remote-action@v1.0.1
       with:
         ipaddr: ${{ env.IPADDR }}
         username: ${{ secrets.USERNAME }}
@@ -95,7 +95,7 @@ jobs:
           docker -v
     # 下载镜像并启动服务,如果第一次启动，前面的docker stop和docker run可以跳过
     - name: install docker and start docker service
-      uses: huaweicloud/ssh-remote-action@v1.2
+      uses: huaweicloud/ssh-remote-action@v1.0.1
       with:
         ipaddr: ${{ env.IPADDR }}
         username: ${{ secrets.USERNAME }}

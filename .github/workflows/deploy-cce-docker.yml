@@ -13,8 +13,8 @@ on:
 #        description: 'docker build image tag'  
 env: 
   IMAGE_TAG: maven-samp-${{ github.sha }}
-  IPADDR: ${ip_address}
-  REGIONID: ${region_id}
+  IPADDR: 123.60.72.1
+  REGIONID: Shanghai1
 # IMAGE_TAG: ${{ github.event.inputs.image_tag }} //如果希望手工控制镜像tag,也需要放开这行，同时屏蔽上面那行IMAGE_TAG
 jobs:
   build:

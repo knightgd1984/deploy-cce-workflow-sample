@@ -40,7 +40,7 @@ jobs:
         access_key: ${{ secrets.ACCESSKEY }}
         secret_key: ${{ secrets.SECRETACCESSKEY }}
         region: ${{ env.REGIONID }}
-        bucket_name: bucket-test
+        bucket_name: obs-lizy2
         operation_type: upload
         local_file_path: target/intro.war
         obs_file_path: workflow/intro/v1.0.0.1/

@@ -13,7 +13,7 @@ public class ReadProperties {
         try {
             config.load(is);
             is.close();
-        } catch (IOException e) {
+        } catch (IOException e2) {
 
         }
     }

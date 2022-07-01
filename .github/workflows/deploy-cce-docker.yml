@@ -79,7 +79,7 @@ jobs:
         image_name: swr.${{ env.REGIONID }}.myhuaweicloud.com/swr-lizy2/tomcat:${{ env.IMAGE_TAG }}
         scan_type: image
         format: table
-        severity: MEDIUM,HIGH,CRITICAL    
+        severity: UNKNOWN
 
     # 在服务器上部署docker并启动，如果服务器已经安装了docker环境，可以跳过
     - name: install docker and start docker service
@@ -105,7 +105,7 @@ jobs:
           docker rm `docker ps -a | grep tomcat | grep maven-sample | awk '{print $1}'`
           docker pull swr.${{ env.REGIONID }}.myhuaweicloud.com/swr-lizy2/tomcat:${{ env.IMAGE_TAG }}
           docker run -d -p 8080:8080 swr.${{ env.REGIONID }}.myhuaweicloud.com/swr-lizy2/tomcat:${{ env.IMAGE_TAG }}
-        
+
     # 检查docker版本
     - name: check docker version
       run: |

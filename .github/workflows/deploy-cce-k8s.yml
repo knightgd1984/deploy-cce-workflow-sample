@@ -78,8 +78,7 @@ jobs:
         image_name: swr.${{ env.REGIONID }}.myhuaweicloud.com/ptworkflow/tomcat:${{ IMAGE_TAG }}
         scan_type: image
         format: table
-        severity: MEDIUM,HIGH,CRITICAL
-        ignore-unfixed: true
+        severity: UNKNOWN
 
     - name: install kubectl
       run: |

@@ -79,6 +79,7 @@ jobs:
         scan_type: image
         format: table
         severity: MEDIUM,HIGH,CRITICAL
+        ignore-unfixed: true
 
     - name: install kubectl
       run: |

@@ -101,8 +101,8 @@ jobs:
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         commands: |
-          docker stop `docker ps -a | grep tomcat | grep maven-sample | awk '{print $1}'`
-          docker rm `docker ps -a | grep tomcat | grep maven-sample | awk '{print $1}'`
+          docker stop `docker ps -a | grep tomcat | grep maven-samp | awk '{print $1}'`
+          docker rm `docker ps -a | grep tomcat | grep maven-samp | awk '{print $1}'`
           docker pull swr.${{ env.REGIONID }}.myhuaweicloud.com/swr-lizy2/tomcat:${{ env.IMAGE_TAG }}
           docker run -d -p 8080:8080 swr.${{ env.REGIONID }}.myhuaweicloud.com/swr-lizy2/tomcat:${{ env.IMAGE_TAG }}
 

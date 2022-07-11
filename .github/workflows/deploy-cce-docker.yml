@@ -1,4 +1,4 @@
-name: "commit-master"
+name: "commit-master-docker"
 
 on:
   push:

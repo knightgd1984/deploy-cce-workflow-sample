@@ -89,7 +89,7 @@ jobs:
         chmod +x ~/k8s/kubectl
         ls -la ~/k8s
         export PATH=~/k8s:$PATH
-        mkdir ~/.kube/config
+        mkdir -p ~/.kube/config
 
     # 需要提前准备好kubectconfig，并存放到可以方便下载到的地方，不建议放到代码仓库里，容易泄露，这里我们放在了obs里
     - name: download from Huawei OBS

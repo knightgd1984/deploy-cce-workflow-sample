@@ -3,7 +3,7 @@ name: "commit-master"
 on:
   push:
     branches: 
-    - 'develop2'
+    - 'master'
 # 如果希望手工控制镜像tag,可以配置放开这个参数，这样每次action执行，都会弹出来image_tag对话框让你填写
 #  workflow_dispatch: 
 #    inputs:
@@ -12,8 +12,8 @@ on:
 #        default: 'v1.0.0.1'
 #        description: 'docker build image tag'  
 env: 
-  IMAGE_TAG: maven-samp-${{ github.sha }}
-  REGIONID: ${region_id}
+  IMAGE_TAG: maven-samp-38cb960
+  REGIONID: cn-north-4
 # IMAGE_TAG: ${{ github.event.inputs.image_tag }} //如果希望手工控制镜像tag,也需要放开这行，同时屏蔽上面那行IMAGE_TAG
 jobs:
   build:
@@ -39,7 +39,7 @@ jobs:
         access_key: ${{ secrets.ACCESSKEY }}
         secret_key: ${{ secrets.SECRETACCESSKEY }}
         region: ${{ env.REGIONID }}
-        bucket_name: bucket-test
+        bucket_name: obs-lizy2
         operation_type: upload
         local_file_path: target/intro.war
         obs_file_path: workflow/intro/v1.0.0.1/
@@ -69,13 +69,13 @@ jobs:
         context: ./
         file: ./Dockerfile
         push: true
-        tags: swr.${{ env.REGIONID }}.myhuaweicloud.com/ptworkflow/tomcat:${{ IMAGE_TAG }}
+        tags: swr.${{ env.REGIONID }}.myhuaweicloud.com/swr-lizy2/tomcat:${{ IMAGE_TAG }}
 
     # 镜像安全扫描，如果需要扫描镜像里是否有安全漏洞，可以使用如下方式进行扫描,severity默认为UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL
     - name: Scan image by trivy
       uses: cfy9/trivy-action@v0.0.2
       with:
-        image_name: swr.${{ env.REGIONID }}.myhuaweicloud.com/ptworkflow/tomcat:${{ IMAGE_TAG }}
+        image_name: swr.${{ env.REGIONID }}.myhuaweicloud.com/swr-lizy2/tomcat:${{ IMAGE_TAG }}
         scan_type: image
         format: table
         severity: UNKNOWN
@@ -99,7 +99,7 @@ jobs:
         access_key: ${{ secrets.ACCESSKEY }}
         secret_key: ${{ secrets.SECRETACCESSKEY }}
         region: ${{ env.REGIONID }}
-        bucket_name: bucket-test
+        bucket_name: obs-lizy2
         operation_type: download
         obs_file_path: k8s/kubeconfig.json
         local_file_path: ~/.kube/config

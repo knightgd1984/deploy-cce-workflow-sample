@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
       - name: tomcat
-        image: swr.cn-north-4.myhuaweicloud.com/ptworkflow/tomcat:_IMAGE_TAG_
+        image: swr.cn-north-4.myhuaweicloud.com/swr-lizy2/tomcat:_IMAGE_TAG_
         ports:
         - containerPort: 8080

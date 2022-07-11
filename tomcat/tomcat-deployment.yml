@@ -5,14 +5,14 @@ metadata:
   labels:
     app: tomcat
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
-      app: tomcat
+      app: cce-lizy2-27511
   template:
     metadata:
       labels:
-        app: tomcat
+        app: cce-lizy2-27511
     spec:
       containers:
       - name: tomcat

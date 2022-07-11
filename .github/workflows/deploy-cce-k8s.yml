@@ -34,7 +34,7 @@ jobs:
     # 上传当前版本到OBS中归档，需要提前准备OBS的AK/SK,并在github项目添加ACCESSKEY和SECRETACCESSKEY两个secrets
     - name: Upload To Huawei OBS
       uses: huaweicloud/obs-helper@v1.0.0
-      id: upload_file_to_obs
+      id: target_upload_file_to_obs
       with:
         access_key: ${{ secrets.ACCESSKEY }}
         secret_key: ${{ secrets.SECRETACCESSKEY }}
@@ -94,7 +94,7 @@ jobs:
     # 需要提前准备好kubectconfig，并存放到可以方便下载到的地方，不建议放到代码仓库里，容易泄露，这里我们放在了obs里
     - name: Upload To Huawei OBS
       uses: huaweicloud/obs-helper@v1.0.0
-      id: upload_file_to_obs
+      id: kubeconfig_upload_file_to_obs
       with:
         access_key: ${{ secrets.ACCESSKEY }}
         secret_key: ${{ secrets.SECRETACCESSKEY }}

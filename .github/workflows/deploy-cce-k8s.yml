@@ -94,7 +94,7 @@ jobs:
 
     # 需要提前准备好kubectconfig，并存放到可以方便下载到的地方，不建议放到代码仓库里，容易泄露，这里我们放在了obs里
     - name: download from Huawei OBS
-      uses: huaweicloud/obs-helper@v1.0.0
+      uses: huaweicloud/obs-helper@v1.2.0
       id: download_file_from_obs
       with:
         access_key: ${{ secrets.ACCESSKEY }}
@@ -103,7 +103,7 @@ jobs:
         bucket_name: obs-lizy2
         operation_type: download
         obs_file_path: k8s/kubeconfig.json
-        local_file_path: ~/.kube/kubeconfig.json
+        local_file_path: ~/.kube/
 
       
     # 部署tomcat 到k8s集群

@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cce-lizy2-27511
+  name: tomcat-deployment
   labels:
-    app: cce-lizy2-27511
+    app: tomcat
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: cce-lizy2-27511
+      app: tomcat
   template:
     metadata:
       labels:
-        app: cce-lizy2-27511
+        app: tomcat
     spec:
       containers:
-      - name: everest-csi-driver-ld84b
+      - name: tomcat-lizy
         image: swr.cn-north-4.myhuaweicloud.com/swr-lizy2/tomcat:_IMAGE_TAG_
         ports:
-        - containerPort: 80
+        - containerPort: 8090

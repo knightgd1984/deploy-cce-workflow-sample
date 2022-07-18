@@ -104,7 +104,7 @@ jobs:
         bucket_name: obs-lizy3
         operation_type: download
         obs_file_path: src/kubeconfig.json
-        local_file_path: ~/kube/kubeconfig.json
+        local_file_path: /home/runner/kube/kubeconfig.json
 
       
     # 部署tomcat 到k8s集群

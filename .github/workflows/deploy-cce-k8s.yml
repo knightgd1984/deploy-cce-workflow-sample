@@ -99,9 +99,9 @@ jobs:
         access_key: ${{ secrets.ACCESSKEY }}
         secret_key: ${{ secrets.SECRETACCESSKEY }}
         region: ${{ env.REGIONID }}
-        bucket_name: obs-lizy2
+        bucket_name: obs-lizy3
         operation_type: download
-        obs_file_path: k8s/kubeconfig.json
+        obs_file_path: src/kubeconfig.json
         local_file_path: /home/runner/.kube/config
 
       

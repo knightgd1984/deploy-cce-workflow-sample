@@ -108,7 +108,9 @@ jobs:
     # 部署tomcat 到k8s集群
     - name: deploy tomcat to CCE k8s from SWR
       run: |
+        cat /home/runner/.kube/config
         sed -i 's/_IMAGE_TAG_/${{ env.IMAGE_TAG }}/g' ./tomcat/tomcat-deployment.yml
+        cat ./tomcat/tomcat-deployment.yml
         kubectl apply -f tomcat/tomcat-deployment.yml
         sleep 60
         kubectl get deployment

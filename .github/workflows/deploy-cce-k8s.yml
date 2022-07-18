@@ -71,14 +71,14 @@ jobs:
         push: true
         tags: swr.${{ env.REGIONID }}.myhuaweicloud.com/swr-lizy2/tomcat:${{ env.IMAGE_TAG }}
 
-#    # 镜像安全扫描，如果需要扫描镜像里是否有安全漏洞，可以使用如下方式进行扫描,severity默认为UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL
-#    - name: Scan image by trivy
-#      uses: cfy9/trivy-action@v0.0.2
-#      with:
-#        image_name: swr.${{ env.REGIONID }}.myhuaweicloud.com/swr-lizy2/tomcat:${{ env.IMAGE_TAG }}
-#        scan_type: image
-#        format: table
-#        severity: UNKNOWN
+    # 镜像安全扫描，如果需要扫描镜像里是否有安全漏洞，可以使用如下方式进行扫描,severity默认为UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL
+    - name: Scan image by trivy
+      uses: cfy9/trivy-action@v0.0.2
+      with:
+        image_name: swr.${{ env.REGIONID }}.myhuaweicloud.com/swr-lizy2/tomcat:${{ env.IMAGE_TAG }}
+        scan_type: image
+        format: table
+        severity: UNKNOWN
 
     - name: install kubectl
       run: |
@@ -89,38 +89,32 @@ jobs:
         chmod +x ~/k8s/kubectl
         ls -la ~/k8s
         export PATH=~/k8s:$PATH
-        mkdir -p ~/kube
-        chmod 777 ~/kube
-        ls -la ~
+        mkdir ~/.kube
 
     # 需要提前准备好kubectconfig，并存放到可以方便下载到的地方，不建议放到代码仓库里，容易泄露，这里我们放在了obs里
     - name: download from Huawei OBS
-      uses: huaweicloud/obs-helper@v1.2.0
+      uses: huaweicloud/obs-helper@v1.0.0
       id: download_file_from_obs
       with:
         access_key: ${{ secrets.ACCESSKEY }}
         secret_key: ${{ secrets.SECRETACCESSKEY }}
         region: ${{ env.REGIONID }}
-        bucket_name: obs-lizy3
+        bucket_name: obs-lizy2
         operation_type: download
-        obs_file_path: src/kubeconfig.json
-        local_file_path: /home/runner/kube/kubeconfig.json
+        obs_file_path: k8s/kubeconfig.json
+        local_file_path: ~/.kube/config
 
       
     # 部署tomcat 到k8s集群
     - name: deploy tomcat to CCE k8s from SWR
       run: |
-        echo ~
-        ls -la ~/kube
-        mv ~/kube/kubeconfig.json ~/kube/config
-        ls -la ~/kube
-        ls -la ~/kube/config
         sed -i 's/_IMAGE_TAG_/${{ env.IMAGE_TAG }}/g' ./tomcat/tomcat-deployment.yml
-        cat ./tomcat/tomcat-deployment.yml
         kubectl apply -f tomcat/tomcat-deployment.yml
+        kubectl apply -f tomcat/tomcat-service.yml
         sleep 60
         kubectl get deployment
         kubectl get pods --show-labels
+        kubectl get service
 
         
 

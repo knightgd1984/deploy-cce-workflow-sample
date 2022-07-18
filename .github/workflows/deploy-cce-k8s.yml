@@ -89,7 +89,8 @@ jobs:
         chmod +x ~/k8s/kubectl
         ls -la ~/k8s
         export PATH=~/k8s:$PATH
-        mkdir -p ~/.kube
+        mkdir -p ~/kube
+        chmod 777 ~/kube
         ls -la ~
 
     # 需要提前准备好kubectconfig，并存放到可以方便下载到的地方，不建议放到代码仓库里，容易泄露，这里我们放在了obs里
@@ -103,17 +104,17 @@ jobs:
         bucket_name: obs-lizy3
         operation_type: download
         obs_file_path: src/kubeconfig.json
-        local_file_path: ~/.kube/kubeconfig.json
+        local_file_path: ~/kube/kubeconfig.json
 
       
     # 部署tomcat 到k8s集群
     - name: deploy tomcat to CCE k8s from SWR
       run: |
         echo ~
-        ls -la ~/.kube
-        mv ~/.kube/kubeconfig.json ~/.kube/config
-        ls -la ~/.kube
-        ls -la ~/.kube/config
+        ls -la ~/kube
+        mv ~/kube/kubeconfig.json ~/kube/config
+        ls -la ~/kube
+        ls -la ~/kube/config
         sed -i 's/_IMAGE_TAG_/${{ env.IMAGE_TAG }}/g' ./tomcat/tomcat-deployment.yml
         cat ./tomcat/tomcat-deployment.yml
         kubectl apply -f tomcat/tomcat-deployment.yml
